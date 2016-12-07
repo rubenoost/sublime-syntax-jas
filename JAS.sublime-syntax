@@ -1,0 +1,53 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: JAS
+file_extensions:
+  - jas
+scope: text.plain
+contexts:
+  main:
+    - include: comment
+    - include: constants
+    - match: \.constant
+      scope: keyword.control
+      push: constants-block
+    - match: \.method
+      scope: keyword.control
+      push: method-block
+    - match: INVOKEVIRTUAL
+      scope: keyword.operator
+      push: invoke-virtual-block
+    - match: \.(main|end-main|var|end-var|end-method)
+      scope: keyword.control
+    - match: ([^:]*:)
+      scope: keyword.control
+    - match: \b(BIPUSH|DUP|ERR|GOTO|HALT|IADD|IAND|IFEQ|IFLT|IF_ICMPEQ|IINC|ILOAD|IN|IOR|IRETURN|ISTORE|ISUB|LDC_W|NOP|OUT|POP|SWAP|WIDE)\b
+      scope: keyword.operator.word
+
+  constants-block:
+    - include: comment
+    - include: constants
+    - match: ^[A-Z]*
+      scope: entity.name.constant
+    - match: \.end-constant
+      scope: keyword.control.c
+      pop: true
+    
+  invoke-virtual-block:
+    - match: .*$
+      scope: entity.name.function
+      pop: true
+
+  method-block:
+    - match: (\w*\(\))
+      scope: entity.name.function
+      pop: true
+
+  constants:
+    - match: \b0x[0-9A-F]{1,2}\b
+      scope: constant.numeric
+
+  comment:
+    - match: (//.*)
+      scope: comment.line
